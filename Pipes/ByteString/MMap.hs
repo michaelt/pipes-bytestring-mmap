@@ -107,8 +107,8 @@ unsaferMMapFile path op = do
     flip finally (closeFd fd) $ do
         stat <- getFdStatus fd
         let size = fromIntegral (fileSize stat)
-        ptr  <- liftIO $ c_mmap size (fromIntegral fd)
-        when (ptr == nullPtr) $ error "System.IO.Posix.MMap.Lazy: unable to mmap file!"
+        ptr0  <- liftIO $ c_mmap size (fromIntegral fd)
+        when (ptr0 == nullPtr) $ error "System.IO.Posix.MMap.Lazy: unable to mmap file!"
         let loop !ptr !rest
               | rest <= 0 = return ()
               | otherwise = let s     = min chunk_size rest
@@ -117,7 +117,7 @@ unsaferMMapFile path op = do
                             in do c  <- liftIO $ unsafePackMMapPtr ptr s
                                   yield c
                                   loop ptr' rest' -- need to be strict
-        op (loop ptr (fromIntegral size))
+        op (loop ptr0 (fromIntegral size))
 
   where
     -- must be page aligned.

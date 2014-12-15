@@ -1,7 +1,17 @@
-This just replaces the lazy bytestrings from `bytestring-mmap` with an intuitively correct type, here `Producer ByteString IO ()` . It is about seven times as fast as the usual `Pipes.ByteString.fromHandle` The benchmarks below compare various 
-implementations of `cat <file>` following [this stack overflow discussion](http://stackoverflow.com/questions/27463669/haskell-performance-implementing-unixs-cat-program-with-data-bytestring) using contributions from `statusfailed`, `bmk`, `dons`, `tommd`, and `sibi`.  
+This just replaces the lazy bytestrings from `bytestring-mmap` 
+with an intuitively correct type, here `Producer ByteString IO ()` . 
+It is about seven times as fast as the usual `Pipes.ByteString.fromHandle`.  
+Of course `fromHandle` is extremely fast, so the difference tends to 
+disappear with a few additional calculations or IO operations, 
+but is perhaps desirable in suitable cases. 
+
+The benchmarks below 
+compare various implementations of `cat <file>` following 
+[this stack overflow discussion](http://stackoverflow.com/questions/27463669/haskell-performance-implementing-unixs-cat-program-with-data-bytestring) 
+using contributions from `statusfailed`, `bmk`, `dons`, `tommd`, and `sibi`.  
     
-(The files used here are in `/bench` using `sibi`s caching avoidance manoeuvre; the material from `/test` is copied over from `bytestring-mmap`)
+(The files used here are in `/bench` using `sibi`s caching-avoidance 
+manoeuvre; the material from `/test` is copied over from `bytestring-mmap`)
     
     
     timing 'cat'
