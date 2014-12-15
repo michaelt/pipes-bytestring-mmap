@@ -60,14 +60,12 @@ import qualified Pipes.Safe as Safe
 import Pipes.Safe (MonadSafe)
 import Control.Monad
 --
--- | The 'unsafeMMapFile' function maps a file or device into memory as
--- a lazy ByteString, made of 64*pagesize unmappable chunks of bytes.
+-- | The 'unsafeMMapFile' and 'unsaferMMapFile' functions maps 
+-- a file or device into memory as
+-- a ByteString producer, made of 64*pagesize unmappable chunks of bytes.
 --
--- Memory mapped files will behave as if they were read lazily -- 
--- pages from the file will be loaded into memory on demand.
--- 
 -- The storage manager is used to free chunks that go out of scope,
--- and unlike strict bytestrings, memory mapped lazy ByteStrings will
+-- and unlike strict mmapped bytestrings, a memory mapped byteString producer will
 -- be deallocated in chunks (so you can write traversals that run in
 -- constant space).
 --
@@ -80,7 +78,7 @@ import Control.Monad
 -- to ensure deallocation, as resources allocated by mmap are not
 -- tracked by the Haskell garbage collector.
 --
--- For example, when writing out a lazy bytestring allocated with mmap,
+-- For example, when writing out a bytestring producer allocated with mmap,
 -- you may wish to finalizeForeignPtr when each chunk is written, as the 
 -- chunk goes out of scope, rather than relying on the garbage collector
 -- to notice the chunk has gone.
