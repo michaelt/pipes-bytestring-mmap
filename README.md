@@ -1,4 +1,4 @@
-This just replaces the lazy bytestrings from `bytestring-mmap` with an intuitively correct type, here `Producer ByteString IO ()` .  The benchmarks below compare various implementations of `cat <file>` following  http://stackoverflow.com/questions/27463669/haskell-performance-implementing-unixs-cat-program-with-data-bytestring using contributions from dons, tommd, statusfailed and sibi.
+This just replaces the lazy bytestrings from `bytestring-mmap` with an intuitively correct type, here `Producer ByteString IO ()` .  The benchmarks below compare various implementations of `cat <file>` following  http://stackoverflow.com/questions/27463669/haskell-performance-implementing-unixs-cat-program-with-data-bytestring using contributions from statusfailed, bmk, dons, tommd, and sibi.
     
     
     timing 'cat'
