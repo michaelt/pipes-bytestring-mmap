@@ -24,7 +24,7 @@ echo ""
 sleep 5
 
 
-echo "timing lazy bytestring (standard)"
+echo "timing lazy bytestring (idiomatic Haskell)"
 time ./LazyMain huge1 > /dev/null
 
 
@@ -32,7 +32,7 @@ echo ""
 echo ""
 sleep 5
 
-echo "timing fancy buffering from SO"
+echo "timing fancy buffering following statusfailed"
 time ./Main huge2 > /dev/null
 
 
@@ -40,7 +40,7 @@ echo ""
 echo ""
 sleep 5
 
-echo "timing fancier use of GHC Buf from SO"
+echo "timing fancier use of GHC.Buf following bmk"
 time ./GHCBufMain huge3 > /dev/null
 
 
@@ -48,16 +48,21 @@ echo ""
 echo ""
 sleep 5
 
-echo "timing Pipes.ByteString"
+echo "timing Pipes.ByteString following sibi"
 time ./PipesMain huge4 > /dev/null
 
+
+
+
+echo "timing Lazy.MMap following dons and tommd"
+time ./LazyMMapMain huge5 > /dev/null
 
 echo ""
 echo ""
 sleep 5
 
 echo "timing Pipes.MMap with SafeT stuff"
-time ./PipesMMapSafish huge5 > /dev/null
+time ./PipesMMapSafish huge6 > /dev/null
 
 echo ""
 echo ""
@@ -70,6 +75,4 @@ echo ""
 echo ""
 sleep 5
 
-echo "timing lazy mmap"
-time ./LazyMMapMain huge7 > /dev/null
 
