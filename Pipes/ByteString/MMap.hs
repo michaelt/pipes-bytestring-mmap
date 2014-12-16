@@ -50,9 +50,10 @@ import Pipes.ByteString.MMap.Internal
 
 import Foreign.C.Types
 import Foreign.Ptr
-
+import Foreign.ForeignPtr.Safe (finalizeForeignPtr )
 import Data.Word
 import Data.ByteString
+import Data.ByteString.Internal
 import System.Posix
 import Pipes
 import Control.Exception
@@ -95,12 +96,13 @@ unsafeMMapFile path = do
         let size = fromIntegral (fileSize stat)
         ptr  <- liftIO $ c_mmap size (fromIntegral fd)
         if ptr == nullPtr
-          then error "System.IO.Posix.MMap.Lazy: unable to mmap file!"
+          then error "Pipes.ByteString.MMap: unable to mmap file!"
           else chunks chunk_size ptr (fromIntegral size)
-  where
-    -- must be page aligned.
-    chunk_size = 64 * fromIntegral pagesize -- empircally derived
---
+
+-- must be page aligned.
+chunk_size :: CSize
+chunk_size = 64 * fromIntegral pagesize -- empircally derived
+
 unsaferMMapFile :: FilePath -> (Producer ByteString IO () -> IO ()) -> IO ()
 unsaferMMapFile path op = do
     fd   <- openFd path ReadOnly Nothing defaultFileFlags
@@ -108,7 +110,7 @@ unsaferMMapFile path op = do
         stat <- getFdStatus fd
         let size = fromIntegral (fileSize stat)
         ptr0  <- liftIO $ c_mmap size (fromIntegral fd)
-        when (ptr0 == nullPtr) $ error "System.IO.Posix.MMap.Lazy: unable to mmap file!"
+        when (ptr0 == nullPtr) $ error "Pipes.ByteString.MMap: unable to mmap file!"
         let loop !ptr !rest
               | rest <= 0 = return ()
               | otherwise = let s     = min chunk_size rest
@@ -119,20 +121,16 @@ unsaferMMapFile path op = do
                                   loop ptr' rest' -- need to be strict
         op (loop ptr0 (fromIntegral size))
 
-  where
-    -- must be page aligned.
-    chunk_size = 64 * fromIntegral pagesize -- empircally derived
-
 --
 -- Break the file up into chunks.
-    -- Have separate munmap finalizers for each chunk.
+-- Have separate munmap finalizers for each chunk.
 --
 chunks :: MonadSafe m => CSize -> Ptr Word8 -> CSize -> Producer ByteString m ()
-chunks chunk_size p bytes = loop p bytes
+chunks chunksize p bytes = loop p bytes
   where
     loop !ptr !rest
           | rest <= 0 = return ()
-          | otherwise = let s     = min chunk_size rest
+          | otherwise = let s     = min chunksize rest
                             ptr'  = ptr `plusPtr` fromIntegral s
                             rest' = rest - s
                         in do c  <- liftIO $ unsafePackMMapPtr ptr s

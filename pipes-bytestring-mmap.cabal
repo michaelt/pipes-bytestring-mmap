@@ -1,25 +1,29 @@
 name:                pipes-bytestring-mmap
 version:             0.2.2
-synopsis:            mmap support for strict ByteStrings
+synopsis:            mmap support for bytestring producers
 description:
     .
     This library provides a wrapper to mmap(2), allowing files or
-    devices to be lazily loaded into memory as strict or lazy
-    ByteStrings, using the virtual memory subsystem to do on-demand
-    loading.
-    .
+    devices to be loaded sequentially into memory as 
+    bytestring producers, using the virtual memory subsystem 
+    to do on-demand loading.
+
 category:            System
-homepage:            http://code.haskell.org/~dons/code/bytestring-mmap/
+homepage:            https://github.com/michaelt/pipes-bytestring-mmap
 license:             BSD3
 license-file:        LICENSE
-author:              Don Stewart 
-maintainer:          Don Stewart <dons00@gmail.com>
+author:              Don Stewart, michaelt
+maintainer:          michaelt
 build-type:          Simple
 cabal-version:      >= 1.2
 
 library
-  build-depends: unix
-  build-depends:     base >= 3 && < 6, bytestring >= 0.9, pipes, transformers, pipes-safe
+  build-depends:     base           >= 3 && < 6
+                     , bytestring   >= 0.9.2.1 && < 0.11
+                     , pipes        >= 4.0     && < 4.2 
+                     , transformers
+                     , pipes-safe   >= 2.0.0   && < 2.3
+                     , unix         >= 2.5.1.0 && < 2.8
   
   extensions:        CPP, ForeignFunctionInterface, BangPatterns
 
